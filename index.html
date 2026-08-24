@@ -1,386 +1,600 @@
-<!doctype html>
+
+
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>구구단 키우기 | DAUNIU</title>
-<style>
-:root{color-scheme:light dark}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:light-dark(#fff8f5,#181315);color:light-dark(#282224,#f6eef1)}
-.app{max-width:720px;margin:auto;padding:12px 9px}
-h1{text-align:center;margin:0 0 2px;font-size:clamp(25px,6.5vw,36px)}
-.desc{text-align:center;margin:0 0 10px;font-weight:800;font-size:14px;color:light-dark(#75595d,#dec8ce)}
-.topline{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:6px 0}
-.mini{background:light-dark(#fff,#251e20);border:1px solid light-dark(#eedfdc,#433539);border-radius:12px;padding:6px 2px;text-align:center;font-size:10px}
-.mini b{display:block;font-size:16px;margin-top:1px}
-.coinbar{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;margin:6px 0 8px;border-radius:13px;background:#fff1b8;border:2px solid #e8bd4e;color:#35270b;font-size:13px}
-.coinbar strong{font-size:16px}
-button{min-height:42px;border:0;border-radius:12px;font-weight:900;cursor:pointer}
-.coinreset{padding:6px 10px;background:#6b5a42;color:#fff;font-size:13px}
-.card{background:light-dark(#fff,#251e20);border:1px solid light-dark(#eedfdc,#433539);border-radius:18px;padding:11px;margin:8px 0}
-label{display:block;font-weight:900;margin:7px 0 4px}
-select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:16px;background:light-dark(#fff,#181315);color:inherit;border:1px solid light-dark(#e6d7d3,#4b3b40)}
-.start,.retry{width:100%;margin-top:10px;background:#d76b75;color:#fff;padding:9px;font-size:15px}
-.game{display:none}
-.gameTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;font-size:12px;font-weight:800;opacity:.8}
-.visual{min-height:135px;display:flex;align-items:flex-end;justify-content:center;padding:4px 2px;background:linear-gradient(180deg,light-dark(#fffaf7,#20191b),light-dark(#fff1e7,#21191b));border-radius:14px;overflow:hidden}
-.grid{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;align-items:end}
-.unit{height:57px;display:flex;align-items:flex-end;justify-content:center;min-width:0}
-.unit svg{width:50px;height:58px;overflow:visible;filter:drop-shadow(0 3px 2px rgba(0,0,0,.12))}
-.progress{height:9px;border-radius:999px;background:light-dark(#f1e5e2,#45373b);overflow:hidden;margin-top:5px}
-.bar{height:100%;width:0;background:#d76b75;transition:width .25s ease}
-.stage{text-align:center;font-size:11px;opacity:.72;margin-top:3px;min-height:16px}
-.problem{text-align:center;font-size:clamp(35px,10vw,52px);font-weight:950;margin:6px 0 4px;line-height:1}
-.answerBox{width:100%;min-height:42px;border:2px solid #d9c7c4;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:950;margin-bottom:5px;background:light-dark(#fffaf8,#191416)}
-.answerBox.empty{color:#a89699;font-size:16px;font-weight:700}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:380px;margin:auto}
-.key{background:light-dark(#f5ece9,#3a3033);color:inherit;font-size:19px;min-height:42px}
-.key.del{background:light-dark(#eadfdb,#4b3e42);font-size:14px}
-.key.ok{background:#d76b75;color:#fff;font-size:15px}
-.msg{text-align:center;min-height:28px;padding:4px 2px;font-weight:850;font-size:13px}
-.result{display:none;text-align:center;padding:14px 9px;margin-top:8px;border-radius:15px;background:#fff1b8;color:#3c2b0b}
-.result h3{font-size:21px;margin:0 0 7px}
-.result .big{font-size:17px;font-weight:900;line-height:1.7}
-.fail{background:#ffe0df;color:#542326}
-.resetBox{display:none;text-align:center;padding:10px;margin-bottom:8px;border-radius:13px;background:light-dark(#fff,#251e20);border:1px solid light-dark(#eedfdc,#433539)}
-.resetBtns{display:flex;gap:6px;justify-content:center;margin-top:7px}
-.resetBtns button{padding:7px 12px}
-.yes{background:#d76b75;color:#fff}
-.no{background:light-dark(#eee6e3,#453a3d);color:inherit}
-.credit{text-align:center;font-size:11px;opacity:.6;font-weight:800;margin:8px 0}
-.pop{animation:pop3 .28s ease}
-@keyframes pop3{from{transform:scale(.91);opacity:.45}to{transform:scale(1);opacity:1}}
-@media(max-width:390px){
-  .app{padding:8px 7px}
-  h1{font-size:25px}
-  .desc{font-size:12px;margin-bottom:7px}
-  .coinbar{padding:6px 8px}
-  .coinbar strong{font-size:14px}
-  .card{padding:8px;margin:6px 0}
-  .visual{min-height:118px}
-  .unit{height:49px}
-  .unit svg{width:44px;height:50px}
-  .problem{font-size:38px;margin:4px 0}
-  .answerBox{min-height:38px;font-size:23px}
-  .key{min-height:39px;font-size:18px}
-  .msg{font-size:12px;min-height:24px}
-}
-</style>
-</head>
-<body>
-<div class="app">
-<h1>🎮 구구단 키우기</h1>
-<p class="desc">구구단공부하고 로블록스 게임 시간 모아보자!</p>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8ee" />
+  <title>수학공방</title>
 
-<div class="topline">
-  <div class="mini">정답<b id="correct">0</b></div>
-  <div class="mini">문제<b id="asked">0/30</b></div>
-  <div class="mini">오답<b id="wrong">0/5</b></div>
-  <div class="mini">시간<b id="timer">10초</b></div>
-</div>
+  <style>
+    * { box-sizing: border-box; }
 
-<div class="coinbar">
-  <strong>🪙 <span id="coins">0</span>코인</strong>
-  <span>300코인 = +10분</span>
-  <button id="coinReset" class="coinreset" type="button">리셋</button>
-</div>
-
-<div id="resetBox" class="resetBox">
-  <strong>코인을 0으로 리셋할까?</strong>
-  <div class="resetBtns">
-    <button id="resetYes" class="yes" type="button">응</button>
-    <button id="resetNo" class="no" type="button">취소</button>
-  </div>
-</div>
-
-<section class="card">
-  <div id="setup">
-    <label for="make">무엇을 만들까?</label>
-    <select id="make">
-      <option value="">선택해줘</option>
-      <option value="cake">🎂 케이크</option>
-      <option value="pizza">🍕 피자</option>
-      <option value="burger">🍔 햄버거</option>
-      <option value="sunflower">🌻 해바라기</option>
-      <option value="tomato">🍅 방울토마토</option>
-    </select>
-
-    <label for="dan">어떤 구구단으로 할까?</label>
-    <select id="dan">
-      <option value="">선택해줘</option>
-      <option value="all">2~9단 랜덤</option>
-      <option value="2">2단</option><option value="3">3단</option><option value="4">4단</option>
-      <option value="5">5단</option><option value="6">6단</option><option value="7">7단</option>
-      <option value="8">8단</option><option value="9">9단</option>
-    </select>
-    <button id="start" class="start" type="button">확인하고 시작!</button>
-    <div id="setupMsg" class="msg" aria-live="polite"></div>
-  </div>
-
-  <div id="game" class="game">
-    <div class="gameTop">
-      <span id="visualTitle">나의 작품</span>
-      <span>정답 하나 = 재료 하나 ✨</span>
-    </div>
-    <div id="visual" class="visual"></div>
-    <div class="progress"><div id="bar" class="bar"></div></div>
-    <div id="stage" class="stage"></div>
-
-    <div id="problem" class="problem">7 × 8 = ?</div>
-    <div id="answerBox" class="answerBox empty">숫자를 눌러줘</div>
-
-    <div class="keypad">
-      <button class="key" data-n="1" type="button">1</button>
-      <button class="key" data-n="2" type="button">2</button>
-      <button class="key" data-n="3" type="button">3</button>
-      <button class="key" data-n="4" type="button">4</button>
-      <button class="key" data-n="5" type="button">5</button>
-      <button class="key" data-n="6" type="button">6</button>
-      <button class="key" data-n="7" type="button">7</button>
-      <button class="key" data-n="8" type="button">8</button>
-      <button class="key" data-n="9" type="button">9</button>
-      <button id="del" class="key del" type="button">⌫ 지우기</button>
-      <button class="key" data-n="0" type="button">0</button>
-      <button id="ok" class="key ok" type="button">확인 ✓</button>
-    </div>
-    <div id="msg" class="msg" aria-live="polite"></div>
-  </div>
-
-  <div id="result" class="result"></div>
-  <button id="retry" class="retry" type="button" style="display:none">처음부터 다시 도전!</button>
-</section>
-
-<div class="credit">
- Created by DAUNIU · © 2026<br>
- Licensed under the MIT License
-</div>
-
-<script>
-(function(){
-const $=id=>document.getElementById(id);
-let correct=0,asked=0,wrong=0,a=0,b=0,answer='',playing=false,timer=null,timeLeft=10,startTime=0;
-const coinKey='gugudanCoins';
-let coins=0;
-try{coins=parseInt(localStorage.getItem(coinKey)||'0',10)||0}catch(e){coins=0}
-
-const names={cake:'케이크',pizza:'피자',burger:'햄버거',sunflower:'해바라기',tomato:'방울토마토'};
-const steps={
-  cake:['빵','크림','빵','딸기','초'],
-  pizza:['도우','양파','파프리카','햄','치즈'],
-  burger:['빵','토마토','햄','상추','빵'],
-  sunflower:['화분','줄기','잎','잎','해바라기'],
-  tomato:['화분','줄기','잎 2장','토마토','토마토']
-};
-
-function saveCoins(){
-  try{localStorage.setItem(coinKey,String(coins))}catch(e){}
-  $('coins').textContent=coins;
-}
-
-function rand(n,m){return Math.floor(Math.random()*(m-n+1))+n}
-function stopTimer(){if(timer){clearInterval(timer);timer=null}}
-function updateStats(){
-  $('correct').textContent=correct;
-  $('asked').textContent=asked+'/30';
-  $('wrong').textContent=wrong+'/5';
-}
-
-function draw(t,p){
-  let x='<svg viewBox="0 0 100 110" aria-hidden="true">';
-  if(t==='cake'){
-    x+='<ellipse cx="50" cy="101" rx="36" ry="6" fill="#d7c8c3"/>';
-    if(p>=1)x+='<rect x="24" y="76" width="52" height="18" rx="5" fill="#e8ad77"/><ellipse cx="50" cy="76" rx="26" ry="5" fill="#f1c08d"/>';
-    if(p>=2)x+='<rect x="24" y="67" width="52" height="10" rx="4" fill="#fff0e6"/>';
-    if(p>=3)x+='<rect x="24" y="49" width="52" height="18" rx="5" fill="#e8ad77"/><ellipse cx="50" cy="49" rx="26" ry="5" fill="#f1c08d"/>';
-    if(p>=4)x+='<path d="M50 43c-8 0-11-10-5-14 4-3 8-1 10 3 2-4 6-6 10-3 6 4 3 14-5 14z" fill="#e95662"/>';
-    if(p>=5)x+='<rect x="48" y="20" width="4" height="14" rx="2" fill="#7bb6e8"/><path d="M50 18c-5-5 1-11 0-14 7 5 6 11 0 14z" fill="#ffb52e"/>';
-  }else if(t==='pizza'){
-    x+='<ellipse cx="50" cy="101" rx="39" ry="6" fill="#d7c8c3"/>';
-    if(p>=1)x+='<circle cx="50" cy="61" r="34" fill="#e9b85e" stroke="#cf9340" stroke-width="5"/>';
-    if(p>=2)x+='<g fill="#f5f0de"><ellipse cx="38" cy="48" rx="9" ry="5"/><ellipse cx="63" cy="70" rx="9" ry="5"/></g>';
-    if(p>=3)x+='<g fill="#e85f4f"><rect x="57" y="43" width="8" height="15" rx="2"/><rect x="31" y="61" width="8" height="14" rx="2"/></g>';
-    if(p>=4)x+='<g fill="#d96a68"><circle cx="45" cy="48" r="6"/><circle cx="63" cy="62" r="6"/><circle cx="43" cy="69" r="6"/></g>';
-    if(p>=5)x+='<g fill="#f6df77"><path d="M27 50l18-9 8 17-18 9z"/><path d="M51 61l20-7 5 17-20 7z"/></g>';
-  }else if(t==='burger'){
-    x+='<ellipse cx="50" cy="101" rx="36" ry="6" fill="#d7c8c3"/>';
-    if(p>=1)x+='<rect x="22" y="82" width="56" height="15" rx="8" fill="#e7a44d"/>';
-    if(p>=2)x+='<rect x="24" y="74" width="52" height="9" rx="4" fill="#e9534f"/>';
-    if(p>=3)x+='<rect x="22" y="61" width="56" height="14" rx="7" fill="#70402f"/>';
-    if(p>=4)x+='<path d="M21 60q6-12 13 0q7-12 14 0q7-12 14 0q7-12 17 0v7H21z" fill="#69ad55"/>';
-    if(p>=5)x+='<path d="M22 58q0-25 28-25q28 0 28 25z" fill="#e7a44d"/>';
-  }else if(t==='tomato'){
-    if(p>=1)x+='<path d="M27 85h46l-7 18H34z" fill="#b97850"/><rect x="24" y="80" width="52" height="8" rx="4" fill="#d08b5b"/>';
-    if(p>=2)x+='<path d="M50 82V39" stroke="#55934c" stroke-width="6" stroke-linecap="round"/><path d="M50 54Q31 45 25 52M50 49Q69 39 76 45" fill="none" stroke="#55934c" stroke-width="3"/>';
-    if(p>=3)x+='<ellipse cx="36" cy="59" rx="14" ry="7" fill="#6cab57" transform="rotate(25 36 59)"/><ellipse cx="65" cy="53" rx="14" ry="7" fill="#6cab57" transform="rotate(-25 65 53)"/>';
-    if(p>=4)x+='<path d="M33 51Q27 49 25 47" stroke="#55934c" stroke-width="3"/><circle cx="24" cy="46" r="10" fill="#e64d48"/><path d="M24 36l-4 7 8-3 6 4-2-8z" fill="#4f9250"/>';
-    if(p>=5)x+='<path d="M67 46Q72 42 77 42" stroke="#55934c" stroke-width="3"/><circle cx="78" cy="42" r="10" fill="#e64d48"/><path d="M78 32l-4 7 8-3 6 4-2-8z" fill="#4f9250"/>';
-  }else{
-    if(p>=1)x+='<path d="M27 85h46l-7 18H34z" fill="#b97850"/><rect x="24" y="80" width="52" height="8" rx="4" fill="#d08b5b"/>';
-    if(p>=2)x+='<path d="M50 82V39" stroke="#55934c" stroke-width="6" stroke-linecap="round"/>';
-    if(p>=3)x+='<ellipse cx="38" cy="66" rx="14" ry="7" fill="#6cab57" transform="rotate(25 38 66)"/>';
-    if(p>=4)x+='<ellipse cx="62" cy="55" rx="14" ry="7" fill="#6cab57" transform="rotate(-25 62 55)"/>';
-    if(p>=5)x+='<g transform="translate(50 28)"><g fill="#f4c843"><ellipse rx="8" ry="20"/><ellipse rx="8" ry="20" transform="rotate(45)"/><ellipse rx="8" ry="20" transform="rotate(90)"/><ellipse rx="8" ry="20" transform="rotate(135)"/></g><circle r="12" fill="#75502f"/></g>';
-  }
-  return x+'</svg>';
-}
-
-function render(){
-  const t=$('make').value;
-  $('bar').style.width=(correct/30*100)+'%';
-  if(!t){$('visual').innerHTML='';return}
-  $('visualTitle').textContent='나의 '+names[t];
-  const full=Math.floor(correct/5),part=correct%5;
-  let h='<div class="grid">';
-  for(let i=0;i<6;i++){
-    const p=i<full?5:(i===full?part:0);
-    h+='<div class="unit">'+draw(t,p)+'</div>';
-  }
-  h+='</div>';
-  $('visual').innerHTML=h;
-  if(correct>=30)$('stage').textContent='🎉 6개 모두 완성!';
-  else $('stage').textContent=(Math.min(6,full+1))+'번째 '+names[t]+' · 다음: '+steps[t][part];
-}
-
-function showAnswer(){
-  if(answer){
-    $('answerBox').textContent=answer;
-    $('answerBox').classList.remove('empty');
-  }else{
-    $('answerBox').textContent='숫자를 눌러줘';
-    $('answerBox').classList.add('empty');
-  }
-}
-
-function next(){
-  if(!playing)return;
-  const d=$('dan').value;
-  a=d==='all'?rand(2,9):Number(d);
-  b=rand(1,9);
-  answer='';
-  showAnswer();
-  $('problem').textContent=a+' × '+b+' = ?';
-  stopTimer();
-  timeLeft=10;
-  $('timer').textContent='10초';
-  timer=setInterval(()=>{
-    timeLeft--;
-    $('timer').textContent=timeLeft+'초';
-    if(timeLeft<=0){
-      stopTimer();
-      register(false,true);
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #fff8ee;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard",
+                   "Noto Sans KR", "Segoe UI", sans-serif;
+      color: #4b2f1b;
     }
-  },1000);
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 22px 14px 34px;
+      background:
+        radial-gradient(circle at 50% -5%, #ffffff 0%, #fff8ee 38%, #fbf1e4 100%);
+    }
+
+    .page {
+      width: min(100%, 900px);
+	  position: relative;
+    }
+	.records-top {
+	  position: absolute;
+	  top: 8px;
+      right: 8px;
+	  z-index: 10;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+  border-radius: 12px;
+
+  background: #fff8dc;
+  border: 1px solid #ead59a;
+
+  color: #6b5124;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 900;
+}
+    .hero {
+      text-align: center;
+      padding: 8px 0 24px;
+    }
+
+    .logo {
+      width: 66px;
+      height: 58px;
+      margin: 0 auto 8px;
+      position: relative;
+    }
+
+    .logo-house {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 0;
+      height: 42px;
+      border: 4px solid #b9783b;
+      border-radius: 8px 8px 12px 12px;
+      background: #f7e8d2;
+    }
+
+    .logo-house::before,
+    .logo-house::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      width: 38px;
+      height: 5px;
+      background: #b9783b;
+      border-radius: 99px;
+    }
+
+    .logo-house::before {
+      left: -5px;
+      transform: rotate(-34deg);
+    }
+
+    .logo-house::after {
+      right: -5px;
+      transform: rotate(34deg);
+    }
+
+    .symbols {
+      position: absolute;
+      inset: 4px 6px 2px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .symbols span:nth-child(1) { color: #6298d7; }
+    .symbols span:nth-child(2) { color: #ef7965; }
+    .symbols span:nth-child(3) { color: #72a76d; }
+    .symbols span:nth-child(4) { color: #d7a443; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 8vw, 62px);
+      font-weight: 950;
+      letter-spacing: -0.06em;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: #8d674a;
+      font-size: clamp(15px, 3vw, 20px);
+      font-weight: 800;
+    }
+
+    .games {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .game-card {
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 28px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(255,255,255,.95);
+      box-shadow: 0 14px 32px rgba(96, 65, 38, .10);
+      padding: 12px;
+    }
+
+    .game-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 21px;
+      background: #f5eadc;
+    }
+
+    .game-bottom {
+      padding: 15px 5px 5px;
+    }
+
+    .game-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 12px;
+      font-size: clamp(21px, 4vw, 30px);
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .symbol {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 25px;
+      font-weight: 950;
+    }
+
+    .multiply .symbol { background: #e98175; }
+    .division .symbol { background: #79a84b; }
+	.addition-game .symbol {background: #78a7dd;}
+    .subtraction-game .symbol {background: #6ead7b;}
+	.subtraction-game .play {
+  background: linear-gradient(135deg, #f3a14b, #ed8437);
+}
+    .addition-game .play {background: linear-gradient(135deg, #78a7dd, #6093ce);}
+    .play {
+      display: flex;
+      width: 100%;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 15px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 950;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s ease;
+    }
+
+    .multiply .play {
+      background: linear-gradient(135deg, #e98479, #d76e67);
+    }
+
+    .division .play {
+      background: linear-gradient(135deg, #82ad52, #6c9740);
+    }
+
+    .play:active {
+      transform: scale(.98);
+    }
+.placeholder-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 21px;
+  background: linear-gradient(180deg, #eef7ea, #e1efdc);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-function finish(){
-  stopTimer();
-  playing=false;
-  const sec=Math.max(1,Math.round((Date.now()-startTime)/1000));
-  const earned=correct;
-  coins+=earned;
-  saveCoins();
-  $('game').style.display='none';
-  $('result').className='result';
-  $('result').style.display='block';
-  $('result').innerHTML='<h3>🎉 30문제 완료!</h3><div class="big">✅ '+correct+'문제 정답<br>⏱️ 총 '+sec+'초<br>🪙 +'+earned+'코인 적립<br>💰 누적 '+coins+'코인</div>';
-  $('retry').style.display='block';
-  render();
+.placeholder-symbol {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #6ead7b;
+  color: white;
+  font-size: 46px;
+  font-weight: 950;
 }
 
-function fail(){
-  stopTimer();
-  playing=false;
-  $('game').style.display='none';
-  $('result').className='result fail';
-  $('result').style.display='block';
-  $('result').innerHTML='<h3>💪 5번 틀렸어!</h3><div class="big">이번 판은 여기까지!<br>다시 처음부터 도전해보자.<br>🪙 이번 판 코인 적립 0개<br>💰 누적 '+coins+'코인은 그대로야.</div>';
-  $('retry').style.display='block';
+.placeholder-text {
+  font-size: 20px;
+  font-weight: 950;
+  color: #55775a;
 }
 
-function register(ok,timeout){
-  if(!playing)return;
-  stopTimer();
-  asked++;
-  if(ok){
-    correct++;
-    $('msg').textContent='정답! +1코인 🪙 · '+steps[$('make').value][(correct-1)%5]+' 추가 ✨';
-    render();
-    $('visual').classList.remove('pop');
-    void $('visual').offsetWidth;
-    $('visual').classList.add('pop');
-  }else{
-    wrong++;
-    $('msg').textContent=timeout?'⏰ 시간 초과! 틀린 문제 +1':'아깝다! 틀린 문제 +1';
-  }
-  updateStats();
-  if(wrong>=5){fail();return}
-  if(asked>=30){finish();return}
-  setTimeout(next,ok?220:340);
+.locked-button {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background: #e5ece3;
+  color: #6f786e;
+  font-size: 15px;
+  font-weight: 950;
 }
+    .coming-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
 
-function begin(){
-  if(!$('make').value||!$('dan').value){
-    $('setupMsg').textContent='만들기와 구구단을 둘 다 선택해줘! 🙂';
-    return;
-  }
-  $('setupMsg').textContent='';
-  correct=0;asked=0;wrong=0;answer='';
-  playing=true;
-  startTime=Date.now();
-  updateStats();
-  $('result').style.display='none';
-  $('retry').style.display='none';
-  $('setup').style.display='none';
-  $('game').style.display='block';
-  $('msg').textContent='틀린 문제는 5번까지! 집중해서 가보자 🔥';
-  render();
-  next();
-}
+    .coming {
+      min-width: 0;
+      min-height: 126px;
+      border-radius: 24px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: 0 10px 25px rgba(96,65,38,.06);
+    }
 
-$('start').addEventListener('click',begin);
-$('retry').addEventListener('click',()=>{
-  $('setup').style.display='block';
-  $('game').style.display='none';
-  $('result').style.display='none';
-  $('retry').style.display='none';
-  correct=0;asked=0;wrong=0;
-  updateStats();
-  $('timer').textContent='10초';
-  render();
-});
+    .addition { background: #edf5fd; }
+    .subtraction { background: #edf6ea; }
 
-document.querySelectorAll('[data-n]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    if(!playing||answer.length>=3)return;
-    answer+=btn.dataset.n;
-    answer=String(Number(answer));
-    showAnswer();
-  });
-});
+    .coming-symbol {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 29px;
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
 
-$('del').addEventListener('click',()=>{
-  answer=answer.slice(0,-1);
-  showAnswer();
-});
-$('ok').addEventListener('click',()=>{
-  if(!playing||!answer)return;
-  register(Number(answer)===a*b,false);
-});
-$('coinReset').addEventListener('click',()=>$('resetBox').style.display='block');
-$('resetNo').addEventListener('click',()=>$('resetBox').style.display='none');
-$('resetYes').addEventListener('click',()=>{
-  coins=0;
-  saveCoins();
-  $('resetBox').style.display='none';
-});
-$('make').addEventListener('change',()=>{ $('setupMsg').textContent=''; render(); });
-$('dan').addEventListener('change',()=>{ $('setupMsg').textContent=''; });
+    .addition .coming-symbol { background: #78a7dd; }
+    .subtraction .coming-symbol { background: #6ead7b; }
 
-saveCoins();
-updateStats();
-render();
-})();
-</script>
+    .coming-title {
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .locked {
+      margin-top: 7px;
+      color: #777;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .records-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 27px 0 15px;
+    }
+
+    .records {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 28px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid #eee1d6;
+      color: #735035;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 950;
+      box-shadow: 0 9px 22px rgba(96,65,38,.08);
+    }
+
+    footer {
+      text-align: center;
+      color: #9a785f;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: .75;
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 8px 8px 10px;
+      }
+
+      .page {
+        width: 100%;
+      }
+
+      .hero {
+        padding: 0 0 8px;
+      }
+
+      .logo {
+        width: 48px;
+        height: 42px;
+        margin-bottom: 3px;
+      }
+
+      .logo-house {
+        left: 6px;
+        right: 6px;
+        height: 31px;
+        border-width: 3px;
+      }
+
+      .logo-house::before,
+      .logo-house::after {
+        top: -9px;
+        width: 28px;
+        height: 4px;
+      }
+
+      .symbols {
+        inset: 2px 4px 1px;
+        font-size: 12px;
+      }
+
+      h1 {
+        font-size: 31px;
+        line-height: 1;
+      }
+
+      .subtitle {
+        margin-top: 4px;
+        font-size: 12px;
+      }
+
+      .games {
+        gap: 7px;
+      }
+
+      .game-card {
+        border-radius: 16px;
+        padding: 5px;
+        box-shadow: 0 7px 18px rgba(96,65,38,.08);
+      }
+
+      .game-image,
+      .placeholder-image {
+        aspect-ratio: 1.35 / 1;
+        border-radius: 12px;
+      }
+
+      .game-image {
+        object-fit: cover;
+      }
+
+      .placeholder-symbol {
+        width: 46px;
+        height: 46px;
+        font-size: 30px;
+      }
+
+      .placeholder-text {
+        font-size: 14px;
+      }
+
+      .game-bottom {
+        padding: 6px 2px 2px;
+      }
+
+      .game-title {
+        gap: 5px;
+        margin-bottom: 5px;
+        font-size: 14px;
+        line-height: 1.1;
+      }
+
+      .symbol {
+        width: 24px;
+        height: 24px;
+        flex-basis: 24px;
+        font-size: 17px;
+      }
+
+      .play,
+      .locked-button {
+        min-height: 34px;
+        border-radius: 10px;
+        font-size: 12px;
+      }
+
+      .records-wrap {
+        padding: 8px 0 5px;
+      }
+
+      .records {
+        min-height: 36px;
+        padding: 0 18px;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+
+      footer {
+        font-size: 10px;
+        padding-top: 0;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .play {
+        font-size: 12px;
+      }
+
+      .game-title {
+        font-size: 15px;
+      }
+    }
+  
+    @media (max-width: 620px) and (max-height: 700px) {
+      body { padding-top: 5px; padding-bottom: 6px; }
+      .hero { padding-bottom: 5px; }
+      .logo { width: 42px; height: 36px; margin-bottom: 1px; }
+      h1 { font-size: 27px; }
+      .subtitle { font-size: 11px; margin-top: 2px; }
+      .games { gap: 5px; }
+      .game-card { padding: 4px; }
+      .game-image,
+      .placeholder-image { aspect-ratio: 1.55 / 1; }
+      .game-bottom { padding-top: 4px; }
+      .game-title { font-size: 12px; margin-bottom: 4px; }
+      .symbol { width: 21px; height: 21px; flex-basis: 21px; font-size: 15px; }
+      .play,
+      .locked-button { min-height: 30px; font-size: 11px; }
+      .records-wrap { padding: 5px 0 3px; }
+      .records { min-height: 32px; font-size: 13px; }
+      footer { font-size: 9px; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page" aria-label="수학공방 메인 화면">
+  
+<!-- 기록보기 -->
+    <a class="records-top" href="records.html">
+      🏆 기록보기
+    </a>
+	
+    <header class="hero">
+      <div class="logo" aria-hidden="true">
+        <div class="logo-house">
+          <div class="symbols">
+            <span>+</span><span>×</span>
+            <span>−</span><span>÷</span>
+          </div>
+        </div>
+      </div>
+
+      <h1>수학공방</h1>
+      <p class="subtitle">문제를 풀고, 하나씩 완성해요!</p>
+    </header>
+
+    <section class="games" aria-label="게임 선택">
+
+      <!-- 구구단 공방 -->
+      <article class="game-card multiply">
+        <img
+          class="game-image"
+          src="assets/gugudan-workshop.png"
+          alt="구구단 공방"
+        />
+        <div class="game-bottom">
+          <div class="game-title">
+            <span class="symbol">×</span>
+            <span>구구단 공방</span>
+          </div>
+          <a class="play" href="gugudan.html">
+            공방 시작하기 <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 나누기 공방 -->
+      <article class="game-card division">
+        <img
+          class="game-image"
+          src="assets/division-workshop.png"
+          alt="나누기 공방"
+        />
+        <div class="game-bottom">
+          <div class="game-title">
+            <span class="symbol">÷</span>
+            <span>나누기 공방</span>
+          </div>
+          <a class="play" href="division.html">
+            공방 시작하기 <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 덧셈 공방 -->
+      <article class="game-card addition-game">
+        <img
+          class="game-image"
+          src="assets/addition-workshop.png"
+          alt="덧셈 공방"
+        />
+        <div class="game-bottom">
+          <div class="game-title">
+            <span class="symbol">+</span>
+            <span>덧셈 공방</span>
+          </div>
+          <a class="play" href="addition.html">
+            공방 시작하기 <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 뺄셈 공방 -->
+<article class="game-card subtraction-game">
+  <img
+    class="game-image"
+    src="assets/subtraction-workshop.png"
+    alt="뺄셈 공방"
+  />
+
+  <div class="game-bottom">
+    <div class="game-title">
+      <span class="symbol">−</span>
+      <span>뺄셈 공방</span>
+    </div>
+
+    <a class="play" href="subtraction.html">
+      공방 시작하기 <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>
+
+ <footer>
+  © 2026 DAUNIU<br>
+  Code licensed under the MIT License.<br>
+  Illustrations & characters © 2026 DAUNIU. All rights reserved.
+</footer>
+
+  </main>
+
 </body>
 </html>

@@ -1,9 +1,27 @@
+DAUNIU Math Workshop License Notice
+
+Copyright (c) 2026 DAUNIU
+
+The MIT License below applies ONLY to the source code in this repository.
+
+All illustrations, characters, artwork, images, logos, and other visual assets
+(including files in the assets/ directory) are expressly excluded from the MIT License.
+
+Illustrations & characters © 2026 DAUNIU. All rights reserved.
+
+Unless separately authorized in writing by DAUNIU, the excluded visual assets may not
+be copied, modified, redistributed, republished, or used in derivative works.
+
+------------------------------------------------------------
+MIT License - Source Code Only
+------------------------------------------------------------
+
 MIT License
 
 Copyright (c) 2026 DAUNIU
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+of the source code and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
