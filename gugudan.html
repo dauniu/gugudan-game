@@ -48,6 +48,20 @@ select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:
 .resetBtns button{padding:7px 12px}
 .yes{background:#d76b75;color:#fff}
 .no{background:light-dark(#eee6e3,#453a3d);color:inherit}
+.homeBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 11px;
+  margin-bottom:7px;
+  border-radius:11px;
+  background:light-dark(#fff,#251e20);
+  border:1px solid light-dark(#eedfdc,#433539);
+  color:inherit;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:900;
+}
 .credit{text-align:center;font-size:11px;opacity:.6;font-weight:800;margin:8px 0}
 .pop{animation:pop3 .28s ease}
 @keyframes pop3{from{transform:scale(.91);opacity:.45}to{transform:scale(1);opacity:1}}
@@ -70,6 +84,7 @@ select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:
 </head>
 <body>
 <div class="app">
+<a href="index.html" class="homeBtn">← 🏠 수학공방</a>
 <h1>🎮 구구단 키우기</h1>
 <p class="desc">구구단공부하고 로블록스 게임 시간 모아보자!</p>
 
