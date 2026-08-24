@@ -281,15 +281,55 @@ stopTimer();timeLeft=10;$('timer').textContent='10초';
 timer=setInterval(()=>{timeLeft--;$('timer').textContent=timeLeft+'초';if(timeLeft<=0){stopTimer();register(false,true)}},1000);
 }
 function saveCompletedItems(){
-const item=$('make').value;if(!item)return;const key='addition_'+item;
-try{const cur=parseInt(localStorage.getItem(key)||'0',10)||0;localStorage.setItem(key,String(cur+6))}catch(e){}
+  const item = $('make').value;
+  const completedCount = Math.floor(correct / 5);
+
+  if(!item || completedCount === 0)return;
+
+  const key = 'addition_' + item;
+
+  try{
+    const cur =
+      parseInt(localStorage.getItem(key) || '0', 10) || 0;
+
+    localStorage.setItem(
+      key,
+      String(cur + completedCount)
+    );
+  }catch(e){}
 }
 function finish(){
-stopTimer();playing=false;const sec=Math.max(1,Math.round((Date.now()-startTime)/1000));const earned=correct;
-coins+=earned;saveCoins();saveCompletedItems();
-$('game').style.display='none';$('result').className='result';$('result').style.display='block';
-$('result').innerHTML='<h3>🎉 30문제 완료!</h3><div class="big">✅ '+correct+'문제 정답<br>⏱️ 총 '+sec+'초<br>🪙 +'+earned+'코인 적립<br>💰 누적 '+coins+'코인<br>➕ 완성품 6개 기록!</div>';
-$('retry').style.display='block';render();
+  stopTimer();
+  playing=false;
+
+  const sec=Math.max(
+    1,
+    Math.round((Date.now()-startTime)/1000)
+  );
+
+  const earned=correct;
+  const completedCount=Math.floor(correct / 5);
+
+  coins+=earned;
+  saveCoins();
+  saveCompletedItems();
+
+  $('game').style.display='none';
+  $('result').className='result';
+  $('result').style.display='block';
+
+  $('result').innerHTML=
+    '<h3>🎉 30문제 완료!</h3>'+
+    '<div class="big">'+
+    '✅ '+correct+'문제 정답<br>'+
+    '⏱️ 총 '+sec+'초<br>'+
+    '🪙 +'+earned+'코인 적립<br>'+
+    '💰 누적 '+coins+'코인<br>'+
+    '✨ 완성품 '+completedCount+'개 기록!'+
+    '</div>';
+
+  $('retry').style.display='block';
+  render();
 }
 function fail(){
 stopTimer();playing=false;$('game').style.display='none';$('result').className='result fail';$('result').style.display='block';
