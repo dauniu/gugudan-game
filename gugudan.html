@@ -209,7 +209,9 @@ select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:
 (function(){
 const $=id=>document.getElementById(id);
 let correct=0,asked=0,wrong=0,a=0,b=0,answer='',playing=false,timer=null,timeLeft=10,startTime=0;
-const coinKey='mathWorkshopCoins';
+const usedProblems = new Set();
+let lastProblem = '';
+  const coinKey='mathWorkshopCoins';
 const oldCoinKey='gugudanCoins';
 let coins=0;
 try{
@@ -354,23 +356,56 @@ function showAnswer(){
 
 function next(){
   if(!playing)return;
-  const d=$('dan').value;
-  a=d==='all'?rand(2,9):Number(d);
-  b=rand(1,9);
+
+  const d = $('dan').value;
+  const maxUnique = d === 'all' ? 72 : 9;
+
+  /*
+    한 단에는 문제가 9개뿐이므로
+    9개를 모두 출제하면 새 묶음으로 시작한다.
+  */
+  if(usedProblems.size >= maxUnique){
+    usedProblems.clear();
+  }
+
+  let problemKey;
+
+  do {
+    a = d === 'all' ? rand(2,9) : Number(d);
+    b = rand(1,9);
+
+    /*
+      숫자의 순서를 그대로 저장한다.
+      따라서 3×5와 5×3은 서로 다른 문제다.
+    */
+    problemKey = a + 'x' + b;
+
+  } while (
+    usedProblems.has(problemKey) ||
+    problemKey === lastProblem
+  );
+
+  usedProblems.add(problemKey);
+  lastProblem = problemKey;
+
   answer='';
   showAnswer();
   $('problem').textContent=a+' × '+b+' = ?';
+
   stopTimer();
   timeLeft=10;
   $('timer').textContent='10초';
+
   timer=setInterval(()=>{
     timeLeft--;
     $('timer').textContent=timeLeft+'초';
+
     if(timeLeft<=0){
       stopTimer();
       register(false,true);
     }
   },1000);
+}
 }
 
 function finish(){
@@ -428,6 +463,8 @@ function begin(){
   correct=0;asked=0;wrong=0;answer='';
   playing=true;
   startTime=Date.now();
+  usedProblems.clear();
+  lastProblem='';
   updateStats();
   $('result').style.display='none';
   $('retry').style.display='none';
