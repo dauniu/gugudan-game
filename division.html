@@ -219,7 +219,8 @@ select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:
 (function(){
 const $=id=>document.getElementById(id);
 let correct=0,asked=0,wrong=0,divisor=0,quotient=0,dividend=0,answer='',playing=false,timer=null,timeLeft=10,startTime=0;
-
+const usedProblems = new Set();
+let lastProblem = '';
 /* 기존 구구단과 같은 코인 지갑을 사용해서 기존 코인이 그대로 이어짐 */
 const coinKey='mathWorkshopCoins';
 let coins=0;
@@ -359,10 +360,33 @@ function showAnswer(){
 function next(){
   if(!playing)return;
 
-  const d=$('dan').value;
-  divisor=d==='all'?rand(2,9):Number(d);
-  quotient=rand(1,9);
-  dividend=divisor*quotient;
+  const d = $('dan').value;
+  const maxUnique = d === 'all' ? 72 : 9;
+
+  /*
+    선택한 단의 9문제를 모두 출제하면
+    새로운 문제 묶음을 시작한다.
+  */
+  if(usedProblems.size >= maxUnique){
+    usedProblems.clear();
+  }
+
+  let problemKey;
+
+  do {
+    divisor = d === 'all' ? rand(2,9) : Number(d);
+    quotient = rand(1,9);
+    dividend = divisor * quotient;
+
+    problemKey = dividend + '/' + divisor;
+
+  } while (
+    usedProblems.has(problemKey) ||
+    problemKey === lastProblem
+  );
+
+  usedProblems.add(problemKey);
+  lastProblem = problemKey;
 
   answer='';
   showAnswer();
@@ -375,6 +399,7 @@ function next(){
   timer=setInterval(()=>{
     timeLeft--;
     $('timer').textContent=timeLeft+'초';
+
     if(timeLeft<=0){
       stopTimer();
       register(false,true);
@@ -458,7 +483,8 @@ function begin(){
   correct=0;asked=0;wrong=0;answer='';
   playing=true;
   startTime=Date.now();
-
+  usedProblems.clear();
+  lastProblem='';
   updateStats();
   $('result').style.display='none';
   $('retry').style.display='none';
