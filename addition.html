@@ -169,6 +169,7 @@ select{width:100%;min-height:42px;border-radius:11px;padding:7px 10px;font-size:
 (function(){
 const $=id=>document.getElementById(id);
 let correct=0,asked=0,wrong=0,a=0,b=0,sum=0,answer='',playing=false,timer=null,timeLeft=10,startTime=0;
+const usedProblems = new Set();
 const coinKey='mathWorkshopCoins';
 let coins=0;
 try{coins=parseInt(localStorage.getItem(coinKey)||'0',10)||0}catch(e){coins=0}
@@ -247,17 +248,31 @@ $('stage').textContent=correct>=30?'🎉 6개 모두 완성!':(Math.min(6,full+1
 function showAnswer(){if(answer){$('answerBox').textContent=answer;$('answerBox').classList.remove('empty')}else{$('answerBox').textContent='숫자를 눌러줘';$('answerBox').classList.add('empty')}}
 
 function makeProblem(){
-const level=$('level').value;
-let max=level==='all'?100:Number(level);
-/* 합이 선택한 범위를 넘지 않도록 생성 */
-if(level==='all'){
-  a=rand(0,99);
-  b=rand(0,100-a);
-}else{
-  a=rand(0,max);
-  b=rand(0,max-a);
-}
-sum=a+b;
+  const level = $('level').value;
+  const max = level === 'all' ? 100 : Number(level);
+
+  let problemKey;
+
+  do {
+    /* 합이 선택한 범위를 넘지 않도록 생성 */
+    if (level === 'all') {
+      a = rand(0, 99);
+      b = rand(0, 100 - a);
+    } else {
+      a = rand(0, max);
+      b = rand(0, max - a);
+    }
+
+    /*
+      3+5와 5+3도 같은 문제로 처리하기 위해
+      작은 숫자를 앞에 놓고 문제 번호를 만든다.
+    */
+    problemKey = Math.min(a, b) + '+' + Math.max(a, b);
+
+  } while (usedProblems.has(problemKey));
+
+  usedProblems.add(problemKey);
+  sum = a + b;
 }
 
 function next(){
@@ -289,7 +304,7 @@ updateStats();if(wrong>=5){fail();return}if(asked>=30){finish();return}setTimeou
 }
 function begin(){
 if(!$('make').value||!$('level').value){$('setupMsg').textContent='만들기와 덧셈 범위를 둘 다 선택해줘! 🙂';return}
-$('setupMsg').textContent='';correct=0;asked=0;wrong=0;answer='';playing=true;startTime=Date.now();updateStats();
+$('setupMsg').textContent='';correct=0;asked=0;wrong=0;answer='';playing=true;startTime=Date.now();usedProblems.clear();updateStats();
 $('result').style.display='none';$('retry').style.display='none';$('setup').style.display='none';$('game').style.display='block';
 $('msg').textContent='틀린 문제는 5번까지! 집중해서 가보자 🔥';render();next();
 }
